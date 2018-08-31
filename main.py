@@ -26,7 +26,7 @@ if platform.system() == 'Windows':
 elif platform.system() == 'Linux':
     harddrive = '/images'
 else:
-    print('WHHHHHHAAAAAA')
+    print('Sytem not known!')
 
 plain_dirs = []
 
