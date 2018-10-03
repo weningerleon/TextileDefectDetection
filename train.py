@@ -1,17 +1,11 @@
 from __future__ import print_function
-
-import keras
-import keras.metrics
 import pickle
 import math
-from keras.callbacks import Callback
-from keras.callbacks import EarlyStopping, ModelCheckpoint
+#from tensorflow.keras.callbacks import Callback
 import numpy as np
 import itertools
 import cv2
 import tensorflow as tf
-tf.python.control_flow_ops = tf
-from Softmax2D import categorical_accuracy_fcn
 from createNetwork import *
 
 def to_categorical3D(data):
@@ -25,14 +19,14 @@ def to_categorical3D(data):
     return res
 
 
-def transform_patch(p):
-    if np.ndim(p)==3:
-        p1 = np.rollaxis(p, axis=2)
-    elif np.ndim(p)==2:
-        p1 = np.expand_dims(p,axis=0)
-    else:
-        print("error in transform_patch")
-    return p1
+#def transform_patch(p):
+#    if np.ndim(p)==3:
+#        p1 = np.rollaxis(p, axis=2)
+#    elif np.ndim(p)==2:
+#        p1 = np.expand_dims(p,axis=0)
+#    else:
+#        print("error in transform_patch")
+#    return p1
 
 
 def largest_rotated_rect(w, h, angle):
@@ -135,8 +129,8 @@ def batch_generator_augmented(imgs, size_patch=(352,400), overlap=(2,2)):
                     Y_patch = patch[:,:,6]
 
                     Y_patch = to_categorical3D(Y_patch)
-                    X_patch = transform_patch(X_patch)
-                    Y_patch = transform_patch(Y_patch)
+                    #X_patch = transform_patch(X_patch)
+                    #Y_patch = transform_patch(Y_patch)
 
                     X_train.append(X_patch)
                     Y_train.append(Y_patch)
@@ -152,7 +146,7 @@ def batch_generator_augmented(imgs, size_patch=(352,400), overlap=(2,2)):
     return X_train,Y_train
 
 
-class AccLogger(Callback):
+class AccLogger(tf.keras.callbacks.Callback):
     def on_train_begin(self, logs={}):
         self.nbatch = 20
         self.num = 0
@@ -172,6 +166,7 @@ class AccLogger(Callback):
         self.epoch_ends.append(self.accs.__len__())
         #self.val_accs.append(logs.get('val_categorical_accuracy_fcn'))
 
+
 def train(model_name,imgs):
     #Function for trainign of the networks
 
@@ -179,43 +174,23 @@ def train(model_name,imgs):
 
     model.compile(loss='categorical_crossentropy',
                   optimizer='adam',
-                  metrics=[categorical_accuracy_fcn])
+                  metrics=['accuracy'])
 
 
     X_train, Y_train = batch_generator_augmented(imgs)
 
-    modelcheckpoint = ModelCheckpoint(model_name, monitor='loss', verbose=0, save_best_only=False,
-                                      save_weights_only=False, mode='auto', period=1)
+    #modelcheckpoint = tf.keras.callbacks.ModelCheckpoint(model_name, monitor='loss', verbose=0, save_best_only=False,
+    #                                  save_weights_only=False, mode='auto', period=1)
 
-    earlystopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=1, verbose=0, mode='auto')
+    #earlystopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=1, verbose=0, mode='auto')
 
-    acclogger = AccLogger()
+    #acclogger = AccLogger()
 
     print("training")
+    with tf.device('device:GPU:0'):
+        model.fit(X_train, Y_train, batch_size=2, epochs=30, validation_split=0.0, shuffle=True)  # , class_weight={0.33,0.33,0.33}
 
-    model.fit(X_train, Y_train, batch_size=2, nb_epoch=5, validation_split=0.0, shuffle=True,
-              callbacks=[acclogger, modelcheckpoint])  # , class_weight={0.33,0.33,0.33}
-
-    pickle.dump((acclogger.accs,acclogger.loss,acclogger.epoch_ends), open(model_name[:-3] + "_complete_logger.p", "wb"))
+    #pickle.dump((acclogger.accs,acclogger.loss,acclogger.epoch_ends), open(model_name[:-3] + "_complete_logger.p", "wb"))
 
     print("training finished")
     model.save(model_name)
-
-def retrain(model_name,imgs):
-    #This function can be used to re-train a network on some data.
-    #e.g. train on all plain weave image, then retrain on a twill weave fabric
-
-    model = keras.models.load_model(model_name, custom_objects={"Softmax2D": Softmax2D, "categorical_accuracy_fcn": categorical_accuracy_fcn})
-
-    X_train, Y_train = batch_generator_augmented(imgs)
-
-    earlystopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=2, verbose=0, mode='auto')
-
-    print("retraining")
-
-    model.fit(X_train, Y_train, batch_size=2, nb_epoch=1, validation_split=0.0, shuffle=True)  # , class_weight={0.33,0.33,0.33}
-
-    print("retraining finished")
-
-    model.save(model_name)
-    print("saved")

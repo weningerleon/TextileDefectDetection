@@ -9,7 +9,7 @@ def getStem(name):
     elif platform.system() == 'Linux':
         target_name = PosixPath(name).stem
     else:
-        print("Fancy Operation System: " + str(platform.system()) + ", unfortunately not supported here")
+        print("Operation System: " + str(platform.system()) + ", unfortunately not supported here")
         raise Exception('Unknown OS: ' + platform.system())
 
     return target_name

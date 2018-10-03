@@ -58,9 +58,6 @@ def detectDefects_warps(file_name, target_name, robust_cov, image=None, write_im
         if min_x < pt.x < max_x and min_y < pt.y < max_y:
             inner_points.append(pt)
 
-
-
-    #TODO: http://scikit-image.org/docs/dev/api/skimage.measure.html
     X = np.zeros([len(inner_points),3])
 
     for idx, pt in enumerate(inner_points):
@@ -114,9 +111,6 @@ def detectDefects_warps(file_name, target_name, robust_cov, image=None, write_im
     density10 = faults10.__len__() / num_points10 * 100
     density11 = faults11.__len__() / num_points11 * 100
 
-    #print(file_name + " fault count von: " + str(fault_count))
-    #print(file_name + " Faults per 100 flt points: " + str(density))
-
     if write_images==True:
         float_points_list.showPoints(image)
         plt.savefig(target_name + '.png')
@@ -147,9 +141,6 @@ def detectDefects_wefts(file_name, target_name, robust_cov, image=None, write_im
         if min_x < pt.x < max_x and min_y < pt.y < max_y:
             inner_points.append(pt)
 
-
-
-    #TODO: http://scikit-image.org/docs/dev/api/skimage.measure.html
     X = np.zeros([len(inner_points),3])
 
     for idx, pt in enumerate(inner_points):
@@ -202,9 +193,6 @@ def detectDefects_wefts(file_name, target_name, robust_cov, image=None, write_im
     density01 = faults01.__len__() / num_points01 * 100
     density10 = faults10.__len__() / num_points10 * 100
     density11 = faults11.__len__() / num_points11 * 100
-
-    # print(file_name + " fault count von: " + str(fault_count))
-    #print(file_name + " Faults per 100 flt points: " + str(density))
 
     if write_images==True:
         float_points_list.showPoints(image)

@@ -10,7 +10,6 @@ from scipy.ndimage.morphology import binary_erosion, binary_dilation, binary_clo
 def morphologie(img_name, target_dir, target_name):
     img = cv2.imread(img_name,cv2.IMREAD_GRAYSCALE)
 
-
     thresh_hor = 195
     thresh_ver = 60
     hor = cv2.threshold(img, thresh_hor, 255, cv2.THRESH_BINARY)[1]
@@ -24,5 +23,5 @@ def morphologie(img_name, target_dir, target_name):
     ver = binary_opening(ver, structure=mat, iterations=2).astype(np.uint8) * 255
     #ver = binary_closing(ver, structure=mat, iterations=1).astype(np.uint8)*255
 
-    cv2.imwrite(target_dir + 'h' + target_name + '.png', hor)
-    cv2.imwrite(target_dir + 'v' + target_name + '.png', ver)
+    cv2.imwrite(os.path.join(target_dir, 'h' + target_name + '.png'), hor)
+    cv2.imwrite(os.path.join(target_dir, 'v' + target_name + '.png'), ver)
