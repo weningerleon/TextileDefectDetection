@@ -1,9 +1,21 @@
-                    GNU AFFERO GENERAL PUBLIC LICENSE
+/***************************************************************************
+*                                                                         *
+*   Copyright (C) 2020 by RWTH Aachen University                          *
+*   http://www.rwth-aachen.de                                             *
+*                                                                         *
+*                                                                         *
+*   License:                                                              *
+*                                                                         *
+*   This software is dual-licensed under:                                 *
+*   • Commercial license (please contact: lfb@lfb.rwth-aachen.de)         *
+*   • AGPL (GNU Affero General Public License) open source license        *
+*                                                                         *
+***************************************************************************/
+
+GNU AFFERO GENERAL PUBLIC LICENSE
                        Version 3, 19 November 2007
 
-Copyright (C) 2020 by RWTH Aachen University
-http://www.rwth-aachen.de 
-
+ Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
  Everyone is permitted to copy and distribute verbatim copies
  of this license document, but changing it is not allowed.
 
